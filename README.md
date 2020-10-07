@@ -1,3 +1,32 @@
+# README 
+
+This is a React version of the classic arcade game 2048. 
+
+## Game Rules 
+
+When you start the game, there will be two “tiles” on the grid, each displaying the number 2 or 4.
+
+
+### Slide 
+
+#### SlideUp (toward the top)
+When you perform a `slideUp` action on the board: 
+* Loop through the array of tiles on the board starting at index 0 
+  * tiles in positions 0-3 **cannot** be moved 
+  * tiles in positions 4-15 **can** moved 
+    * each tiles movement is dependent on: 
+      * the tiles between the selected tile and the _top_ edge 
+        * tiles of different values will halt movement 
+        * tiles of the same value will be merged toward the _top_ edge
+* After all tiles are moved, any null values in the tile array should be filled with empty tiles 
+* Lastly; a new tile should be placed in a random open spot on the board 
+
+
+
+
+
+# TEMPLATE STUFFF 
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

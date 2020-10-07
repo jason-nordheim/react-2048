@@ -1,14 +1,12 @@
-import React from 'react' 
-import useBoard from '../hooks/useBoard'
+import React from 'react'
+import Tile from './Tile'
 
-const Board = () => {
-  const [board, setBoard] = useBoard()
-
+function Board({tiles}) {
   return (
     <div className="board">
-      
+      {tiles.map((tile, index) => <Tile key={index} number={tile} />)}
     </div>
-  )
+  );
 }
 
 export default Board

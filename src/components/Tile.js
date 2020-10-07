@@ -1,10 +1,12 @@
 import React from 'react'
+import { colorByValue } from '../utils/TileUtilities'
 
-const Tile = ({number}) => {
+function Tile({number}) {
+
   return (
-    <span className="tile"> 
+    <div className={`tile ${ colorByValue(number) }`}>
       {number}
-    </span>
+    </div>
   )
 }
 

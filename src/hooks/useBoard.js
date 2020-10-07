@@ -1,38 +1,55 @@
-import React, { useState, useEffect } from 'react'
-import { createBoard } from '../helpers/tileHelpers'
+import { useState, useEffect } from 'react'
+import { createBoard, gameFinished, newTile, randomIndex, indexUp, slideUp } from '../utils/BoardUtilities'
 
-/**
- * hook to abstract functionality of board
- * @param {number} x axis dimension
- * @param {number} y axis dimension
- */
-const useBoard = (x=4, y=4) => {
-  const [tiles, setTiles] = useState(createBoard(x,y))
-  
-  const moveLeft = () => {
-    for (let i = 0; i < x; i++) {
-      const row = tiles[i];
-      for (let j = 0; j < y; j++) {
-        const tile = row[j];
-        console.log(i,j,tile)
-        if(tile.value !== 0 && i !== 0){
+function useBoard(){
+  const [tiles, setTiles] = useState(createBoard())
+  const [gameOver, setGameOver] = useState(false)
 
-        }
-      }
+  useEffect(() => {
+    setGameOver(gameFinished(tiles)) 
+  }, [tiles])
+
+  /**
+   * Starts the game
+   * 
+   * generates 2 random indexes to place tiles 
+   * generates 2 random tiles to be placed at the random indexes  
+   */
+  function start(){
+    const tilesCopy = createBoard() 
+    const index1 = randomIndex() 
+    let index2 = randomIndex() 
+    while (index1 === index2) {
+      index2 = randomIndex() 
+    }
+    tilesCopy[index1] = newTile() 
+    tilesCopy[index2] = newTile() 
+    setTiles(tilesCopy)
+  }
+
+  /**
+   * Slides the tiles on the board in the provided direction 
+   * @param {string} direction 
+   */
+  function slide(direction){
+    switch (direction) {
+      case "up":
+        setTiles(slideUp(tiles)) 
+        break;
+      case "down":
+        break;
+      case "right":
+        break;
+      case "left":
+        break;
+      default:
+        break;
     }
   }
 
-  const moveRight = () => {};
-  const moveDown = () => {};
-  const moveUp = () => {};
 
-  useEffect(() => {
-    console.log(tiles[0][0])
-    moveLeft()
-  }, [tiles])
 
-  return [tiles]
+  return [tiles, gameOver, start, slide]
 }
-
 
 export default useBoard
