@@ -154,7 +154,6 @@ export function slideUp(board, mergedIndices = []) {
       }
     }
 
-    console.log("movedTiles", tilesToMove);
 
 
     // if the number of tiles that cannot be moved is
