@@ -23,7 +23,22 @@ When you perform a `slideUp` action on the board:
 
 
 
+## Future Features 
 
+* [rare-error] - Bail out of the recursion loop and only merge a tile once per turn... note, this would only currently occur if the if two tiles could be merged simultaneously (i.e. there are two tiles with the same value being merged, that could be merged again)
+* [account-system]
+  * [login-system]
+  * [point-system]
+  * [score-board]
+
+
+## Contributions 
+
+This project was built by [Jason Nordheim](https://github.com/jason-nordheim) in September 2020 
+
+
+
+--- 
 
 # TEMPLATE STUFFF 
 
