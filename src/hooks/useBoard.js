@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
 import { createBoard, gameFinished, newTile, randomIndex, slideUp, slideDown, slideRight, slideLeft, isDifferent, placeNewTile, generateNewGame } from '../utils/BoardUtilities'
 
+/**
+ * Hook to handle the functionality of the game 
+ */
 function useBoard(){
   const [tiles, setTiles] = useState(createBoard())
   const [gameOver, setGameOver] = useState(false)
   const [turns, setTurns] = useState(0)
 
-  // anytime the tiles array changes, 
-  // check to see if the game is complete 
+  /* anytime the tiles array changes, 
+   * check to see if the game is complete */ 
   useEffect(() => {
     setGameOver(gameFinished(tiles))
   }, [tiles])
@@ -45,15 +48,8 @@ function useBoard(){
 
     /* Increment turn counter */
     if(isDifferent(newBoard,tiles)) {
-      console.log('its different')
-      console.log('old', tiles, 'new', newBoard)
-      const board = placeNewTile(newBoard)
-      console.log('placing tile', board)
-      // setTurns(turns + 1) 
+      setTurns(turns + 1) 
       setTiles(placeNewTile(newBoard)) 
-    } else {
-      console.log('its the same')
-      console.log("old", tiles, "new", newBoard);
     }
   }
 
