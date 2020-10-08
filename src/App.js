@@ -5,6 +5,7 @@ import "./App.css";
 import Board from "./components/Board";
 import ControlPanel from './components/ControlPanel'
 import Header from './components/Header'
+import ScoreBoard from './components/ScoreBoard'
 // hooks
 import useBoard from "./hooks/useBoard";
 
@@ -16,8 +17,11 @@ import useBoard from "./hooks/useBoard";
  */
 function App() {
   const [started, setStarted] = useState(false)
-  const [tiles, gameOver, start, slide] = useBoard();
+  const [tiles, gameOver, points, turns, start, slide] = useBoard();
 
+  /**
+   * function to start the game 
+   */
   const startGame = () => {
     start() 
     setStarted(true)
@@ -26,6 +30,7 @@ function App() {
   return (
     <div className="app">
       <Header /> 
+      <ScoreBoard points={points} turns={turns} />
       <div className="game_container">
         <Board tiles={tiles} />
         <ControlPanel started={started} startGame={startGame} gameOver={gameOver} slide={slide} /> 

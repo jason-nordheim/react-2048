@@ -89,10 +89,11 @@ export function gameFinished(tiles) {
  * Move the tiles upward on the board 
  * returning a new board with all the tiles 
  * positions moved toward the top 
- * @param {Array<number>} board
- * @returns {Array<number} newBoard 
+ * @param {Array<number>} board - array of numbers representing the tiles on the board 
+ * @param {Array<number>} mergedIndices - any indices that have already been merged 
+ * @returns {[Array<number>, number]} [newBoard, pointsScored]  
  */
-export function slideUp(board, mergedIndices = []) {
+export function slideUp(board, mergedIndices = [], pointsScored = 0) {
   const newBoard = [...board];
   let unMoveableTiles = 0; 
 
@@ -112,23 +113,14 @@ export function slideUp(board, mergedIndices = []) {
   // if no tiles were moved, there is no more
   // sliding to do
   if (tilesToMove === 0) {
-    return newBoard;
+    return [newBoard, pointsScored];
   } else {
     // place the new tiles in their new positions and
     // fill the old positions with empty tiles
     for (let i = 0; i < mappedTiles.length; i++) {
       if (tilesToMove === unMoveableTiles) {
         // no more tiles to move 
-        return newBoard; 
-      } else if (mergedIndices.includes(mappedTiles[i].indicies.new)) {
-        // if the destination is in the tiles merged
-        // and the number of tiles left to move is 1, 
-        // then this is the last merge
-        if (tilesToMove === (unMoveableTiles + mergedIndices.length)) {
-          return newBoard
-        }
-        unMoveableTiles++;
-        continue;
+        return [newBoard, pointsScored]; 
       } else if (mappedTiles[i].indicies.new === mappedTiles[i].indicies.old) {
         // tiles with the same index do not move
         continue;
@@ -147,6 +139,8 @@ export function slideUp(board, mergedIndices = []) {
         // save the index of the merged tile so that it
         // won't be re-merged within the same turn
         mergedIndices.push(mappedTiles[i].indicies.new);
+        // add the points 
+        pointsScored += mappedTiles[i].value * 2 
       } else {
         console.log("unmovable tile found");
         // the tiles have different values and cannot be merged
@@ -161,11 +155,11 @@ export function slideUp(board, mergedIndices = []) {
     // the same as the number of tiles that are supposed to
     // be moved, then we are done moving tiles
     if (unMoveableTiles === tilesToMove) {
-      return newBoard;
+      return [newBoard, pointsScored];
     }
     
     // keep doing this till nothing can move
-    return slideUp(newBoard);
+    return slideUp(newBoard, mergedIndices, pointsScored);
   }
 }
 
@@ -181,9 +175,9 @@ export function slideDown(board) {
   // rotate the board so that we can parse vertically
   const rotatedBoard = rotateCounterClockwise(rotateCounterClockwise(board));
   // slide and merge tiles
-  const slideBoard = slideUp(rotatedBoard);
+  const [slideBoard, scoredPoints] = slideUp(rotatedBoard);
   // undo rotatation
-  return rotateClockwise(rotateClockwise(slideBoard));
+  return [rotateClockwise(rotateClockwise(slideBoard)), scoredPoints];
 }
 
 
@@ -199,9 +193,9 @@ export function slideRight(board) {
   // rotate the board so that we can parse vertically 
   const rotatedBoard = rotateCounterClockwise(board)
   // slide and merge tiles 
-  const slideBoard = slideUp(rotatedBoard)
+  const [slideBoard, scoredPoints] = slideUp(rotatedBoard)
   // undo rotatation 
-  return rotateClockwise(slideBoard)
+  return [rotateClockwise(slideBoard), scoredPoints] 
 }
 
 /**
@@ -216,9 +210,9 @@ export function slideLeft(board) {
   // rotate the board so that we can parse vertically 
   const rotatedBoard = rotateClockwise(board)
   // slide and merge tiles 
-  const slideBoard = slideUp(rotatedBoard)
+    const [slideBoard, scoredPoints] = slideUp(rotatedBoard);
   // undo rotatation 
-  return rotateCounterClockwise(slideBoard)
+  return [rotateCounterClockwise(slideBoard), scoredPoints] 
 }
 
 
