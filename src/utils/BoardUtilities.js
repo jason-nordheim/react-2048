@@ -9,25 +9,21 @@ const RIGTH_MAP = [1, 2, 3, 3, 5, 6, 7, 7, 9, 10, 11, 11, 13, 14, 15, 15];
 const CLOCKWISE_MAP = [3,7,11,15,2,6,10,14,1,5,9,13,0,4,8,12]
 const COUNTER_CLOCKWISE_MAP = [12,8,4,0,13,9,5,1,14,10,6,2,15,11,7,3]
 
+/**
+ * take the direction the tiles are moving, 
+ * and its starting index and returning the 
+ * destination index 
+ * @param {string} direction 
+ * @param {number} index 
+ */
 export function getIndex(direction, index) {
-  if (direction === "up") {
-    const out = UP_MAP[index]
-    //console.log(`getIndex(${direction},${index})`, out)
-    return out
-  } else if (direction === "down") {
-    const out = DOWN_MAP[index];
-    //console.log(`getIndex(${direction},${index})`, out);
-    return out;
-  } else if (direction === "right") {
-    const out = RIGTH_MAP[index];
-    //console.log(`getIndex(${direction},${index})`, out);
-    return out;
-  } else if (direction === "left") {
-    const out = LEFT_MAP[index];
-    //console.log(`getIndex(${direction},${index})`, out);
-    return out;
-  } else throw new Error("invalid direction");
+  if (direction === "up") return UP_MAP[index]
+  else if (direction === "down") return DOWN_MAP[index]
+  else if (direction === "right") return RIGTH_MAP[index];
+  else if (direction === "left") return LEFT_MAP[index];
+  else throw new Error("invalid direction");
 }
+
 
 /**
  * Creates a new board with two tiles 
@@ -97,7 +93,7 @@ export function gameFinished(tiles) {
  * @param {Array<number>} board
  * @returns {Array<number} newBoard 
  */
-export function slideUp(board) {
+export function slideUp(board, mergedIndices = []) {
   const newBoard = [...board];
   let unMoveableTiles = 0; 
 
@@ -109,20 +105,29 @@ export function slideUp(board) {
 
   /* figure out how many tiles moved by counting the ones
    * that have the same new/previous values  */
-  const movedTiles = mappedTiles.filter(tile => tile.indicies.new !== tile.indicies.old).length
+  const tilesToMove = mappedTiles.filter(tile => tile.indicies.new !== tile.indicies.old).length
 
 
   // if no tiles were moved, there is no more
   // sliding to do
-  if (movedTiles === 0) {
+  if (tilesToMove === 0) {
     return newBoard;
   } else {
     // place the new tiles in their new positions and
     // fill the old positions with empty tiles
     for (let i = 0; i < mappedTiles.length; i++) {
-      if (movedTiles === unMoveableTiles) {
+      if (tilesToMove === unMoveableTiles) {
         // no more tiles to move 
         return newBoard; 
+      } else if (mergedIndices.includes(mappedTiles[i].indicies.new)) {
+        // if the destination is in the tiles merged
+        // and the number of tiles left to move is 1, 
+        // then this is the last merge
+        if (tilesToMove === (unMoveableTiles + 1)) {
+          return newBoard
+        }
+        unMoveableTiles++;
+        continue;
       } else if (mappedTiles[i].indicies.new === mappedTiles[i].indicies.old) {
         // tiles with the same index do not move
         continue;
@@ -131,26 +136,31 @@ export function slideUp(board) {
         // and null old value
         newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value;
         newBoard[mappedTiles[i].indicies.old] = 0;
-      } else if (newBoard[mappedTiles[i].indicies.new] === mappedTiles[i].value) {
+      } else if (
+        newBoard[mappedTiles[i].indicies.new] === mappedTiles[i].value
+      ) {
         // the source and destination has the same value
         // combine tiles and null old tile location
         newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value * 2;
         newBoard[mappedTiles[i].indicies.old] = 0;
+        // save the index of the merged tile so that it
+        // won't be re-merged within the same turn
+        mergedIndices.push(mappedTiles[i].indicies.new);
       } else {
-        console.log('unmovable tile found')
+        console.log("unmovable tile found");
         // the tiles have different values and cannot be merged
         unMoveableTiles++;
         continue;
       }
     }
 
-    console.log("movedTiles", movedTiles);
+    console.log("movedTiles", tilesToMove);
 
 
     // if the number of tiles that cannot be moved is
     // the same as the number of tiles that are supposed to
     // be moved, then we are done moving tiles
-    if (unMoveableTiles === movedTiles) {
+    if (unMoveableTiles === tilesToMove) {
       return newBoard;
     }
     
