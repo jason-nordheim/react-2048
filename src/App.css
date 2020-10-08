@@ -1,26 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=B612+Mono:wght@700&display=swap'); 
+
+/* remove any conditional browser padding */
 * {
   margin: 0;
   padding: 0;
 }
 
+/* main application container */
 .app {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-content: center;
+}
+
+
+/* align the board and the control panels horizontallly */
+.board_container {
+  display: flex;
   justify-content: center;
 }
 
-.board {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: minmax(100px, auto);
+/* align all the children (buttons) within the  control 
+ * pannel excluding 150px of padding on either side */
+.controlPanel {
+  display: flex; 
+  justify-content: space-evenly;
+  padding: 0 150px;
+}
+/* add a better font to the buttons within the 
+ * control pannel and change the font to make 
+ * it a bit fancier, and now let the buttons grow
+ * within their container, but never let them g
+ * grow beyond 100px */
+.controlPanel > button {
+  font-family: 'B612 Mono', monospace;
+  flex: 1;
+  max-width: 100px;
 }
 
+/* push all the other buttons in the control
+ * panel a little to the right (50px) to visually 
+ * distinguish between move related buttons and 
+ * new/start game functionality */
+.start_button {
+  margin-right: 50px;
+}
+
+/* display the tiles in a grid of 4 columns 
+ * and 4 rows with 0.05 fractional units between
+ * each tile vertically and horizontally, 
+ * and an additional white margin of 1 rem 
+ * around the board */
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, 0.05fr);
+  grid-template-rows: repeat(4, 0.05fr);
+  margin: 1rem;
+}
+
+
+/* use a nicer font (cheers google fonts)
+ * and make it a it biggger to make game play easier.
+ * each tile will have an solid gray edge of 1 px 
+ * with 1 rem of padding between the tile and 
+ * the edge of the element to make things a bit easier
+ * on the eyes. Set each element to have a fixed 
+ * ratio for the with but scale with the font size 
+ * in a square fashion (1rem) */
 .tile {
+  font-family: 'B612 Mono', monospace;
+  font-size: large;
   display: block;
   border: 1px solid gray;
+  padding: 1rem;
+  margin: 0.1rem;
   text-align: center;
-  margin: 2px;
-  width: 50px;
-  height: 50px;
+  width: 1rem;
+  height: 1rem;
 }
+
+
 
 /* tile colors */
 .zero {

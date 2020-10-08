@@ -3,8 +3,10 @@ import Tile from './Tile'
 
 function Board({tiles}) {
   return (
-    <div className="board">
-      {tiles.map((tile, index) => <Tile key={index} number={tile} />)}
+    <div className="board_container">
+      <div className="board">
+        {tiles.map((tile, index) => <Tile key={index} number={tile} />)}
+      </div>
     </div>
   );
 }
