@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=B612+Mono:wght@700&display=swap'); 
 
-/* remove any conditional browser padding */
+/* remove any conditional browser padding and set a default font */
 * {
   margin: 0;
   padding: 0;
+  font-family: 'B612 Mono', monospace;
 }
 
 /* main application container */
@@ -38,13 +39,10 @@
   justify-content: space-evenly;
 }
 
-/* add a better font to the buttons within the 
- * control pannel and change the font to make 
- * it a bit fancier, and now let the buttons grow
- * within their container, but never let them g
- * grow beyond 100px */
+/* buttons within the control pannel should grow
+ * within their container, but never let them 
+ * get wider than 100px */
 .controlPanel > button {
-  font-family: 'B612 Mono', monospace;
   flex: 1;
   min-width: 80px;
   max-width: 100px;
@@ -71,24 +69,24 @@
 }
 
 
-/* use a nicer font (cheers google fonts)
- * and make it a it biggger to make game play easier.
- * each tile will have an solid gray edge of 1 px 
- * with 1 rem of padding between the tile and 
+/* make the font biggger to enhance readability. 
+ * add a solid gray border edge of 1 px solid gray 
+ * place 1 rem of padding between the tile and 
  * the edge of the element to make things a bit easier
  * on the eyes. Set each element to have a fixed 
  * ratio for the with but scale with the font size 
- * in a square fashion (1rem) */
+ * in a square fashion (3 rem) */
 .tile {
-  font-family: 'B612 Mono', monospace;
-  font-size: large;
+  font-size: x-large;
   display: block;
   border: 1px solid gray;
-  padding: 1rem;
+  padding: 2rem 2rem;
   margin: 0.1rem;
   text-align: center;
-  width: 1rem;
-  height: 1rem;
+  min-width: 2rem;
+  min-height: 2rem;
+  max-width: 3rem;
+  max-height: 3rem;
 }
 
 /* header should use the cool font that is being used 
@@ -101,6 +99,36 @@
   padding: 0 150px;
   justify-content: center;
 }
+
+/* space the items within the scoreboard 
+ * evenly */
+.scoreBoard {
+  display: flex; 
+  justify-content: space-around;
+  padding: 25px 150px; 
+}
+/* Each stat should grow to fill the empty space 
+ * and the children elements should be have space some 
+ * space around them, but never stretch beyond 150px */
+.stat { 
+  display: flex;
+  flex: 1;
+  justify-content: space-around;
+  max-width: 150px;
+  margin: 0 1rem;
+}
+/* values displayed on the scoreboard should 
+ * appear a little differently than their labels */
+.stat:nth-of-type(odd) {
+  color: darkorange;
+  border-bottom: 1px solid gray;
+}
+.stat:nth-of-type(even) {
+  color: darkred;
+  border-bottom: 1px solid gray;
+}
+
+
 
 
 

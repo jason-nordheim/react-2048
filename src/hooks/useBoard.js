@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { createBoard, gameFinished, newTile, randomIndex, slideUp, slideDown, slideRight, slideLeft, isDifferent, placeNewTile, generateNewGame } from '../utils/BoardUtilities'
+import { createBoard, gameFinished, slideUp, slideDown, slideRight, slideLeft, isDifferent, placeNewTile, generateNewGame } from '../utils/BoardUtilities'
 
 /**
  * Hook to handle the functionality of the game 
@@ -8,6 +8,7 @@ function useBoard(){
   const [tiles, setTiles] = useState(createBoard())
   const [gameOver, setGameOver] = useState(false)
   const [turns, setTurns] = useState(0)
+  const [points, setPoints] = useState(0) 
 
   /* anytime the tiles array changes, 
    * check to see if the game is complete */ 
@@ -17,9 +18,11 @@ function useBoard(){
 
 
   /**
-   * Starts the game
+   * Starts/restarts the game
    */
   function start(){
+    setTurns(0)
+    setPoints(0)
     setTiles(generateNewGame());
   }
 
@@ -28,34 +31,37 @@ function useBoard(){
    * @param {string} direction 
    */
   function slide(direction){
-    let newBoard = []
+    let slideResult;  
     switch (direction) {
       case "up":
-        newBoard = slideUp(tiles);
+        slideResult = slideUp(tiles);
         break;
       case "down":
-        newBoard = slideDown(tiles) 
+        slideResult = slideDown(tiles); 
         break;
       case "right":
-        newBoard = slideRight(tiles)
+        slideResult = slideRight(tiles);
         break;
       case "left":
-        newBoard = slideLeft(tiles)
+        slideResult = slideLeft(tiles);
         break;
       default:
         break;
     }
+    
+    const [newBoard, scoredPoints] = slideResult
 
     /* Increment turn counter */
     if(isDifferent(newBoard,tiles)) {
       setTurns(turns + 1) 
+      setPoints(points + scoredPoints)
       setTiles(placeNewTile(newBoard)) 
     }
   }
 
 
 
-  return [tiles, gameOver, start, slide]
+  return [tiles, gameOver, points, turns, start, slide]
 }
 
 export default useBoard

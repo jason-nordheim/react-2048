@@ -3,7 +3,7 @@ import useEventListener from '../hooks/useEventListener'
 
 /**  
  * Component to manage the game controls 
- * @param {{boolean, boolean, startGameFunction, slideFunction }} props  
+ * @param {{boolean, boolean,startGameFunction,slideFunction}} props  
  */
 function ControlPanel({ gameOver, started, startGame, slide }) {
 
