@@ -77,12 +77,11 @@ export function newTile() {
  * @returns {boolean} gameStatus
  */
 export function gameFinished(tiles) {
+  // default to the game being over
   let gameOver = true;
-  tiles.forEach((t) => {
-    if (t === 0) {
-      gameOver = false;
-    }
-  });
+  // if any of the tiles are unused (t === 0)
+  // then the game is not over 
+  tiles.forEach((t) => t === 0 ? gameOver = false : null );
   return gameOver;
 }
 
@@ -123,7 +122,7 @@ export function slideUp(board, mergedIndices = []) {
         // if the destination is in the tiles merged
         // and the number of tiles left to move is 1, 
         // then this is the last merge
-        if (tilesToMove === (unMoveableTiles + 1)) {
+        if (tilesToMove === (unMoveableTiles + mergedIndices.length)) {
           return newBoard
         }
         unMoveableTiles++;
