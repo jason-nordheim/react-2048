@@ -30,8 +30,8 @@
   justify-content: center;
 }
 
-/* align all the children (buttons) within the  control 
- * pannel excluding 150px of padding on either side */
+/* align all the children (buttons) with even 
+ * spacing between each element (button) */
 .controlPanel {
   display: flex; 
   flex-direction: column;
@@ -51,12 +51,11 @@
   margin: 0.5rem;
 }
 
-/* push all the other buttons in the control
- * panel a little to the right (50px) to visually 
- * distinguish between move related buttons and 
- * new/start game functionality */
-.start_button {
-  margin-bottom: 1rem;
+/* the start button (first child in the control panel)
+ * should be have a little visual distinction seperating it from 
+ * the game controls */
+.controlPanel > button:first-child {
+  margin-bottom: 1.5rem;
 }
 
 /* display the tiles in a grid of 4 columns 
