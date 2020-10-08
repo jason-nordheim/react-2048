@@ -1,6 +1,10 @@
 import React from 'react'
 import Tile from './Tile'
 
+/**
+ * 2048 Board Component 
+ * @param {number[]} param0 
+ */
 function Board({tiles}) {
   return (
     <div className="board_container">
