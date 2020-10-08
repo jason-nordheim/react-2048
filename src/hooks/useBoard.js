@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react'
 import { createBoard, gameFinished, slideUp, slideDown, slideRight, slideLeft, isDifferent, placeNewTile, generateNewGame } from '../utils/BoardUtilities'
 
+/**
+ * Hook to handle the functionality of the game 
+ */
 function useBoard(){
   const [tiles, setTiles] = useState(createBoard())
   const [gameOver, setGameOver] = useState(false)
   const [turns, setTurns] = useState(0)
   const [points, setPoints] = useState(0) 
 
-  // anytime the tiles array changes, 
-  // check to see if the game is complete 
+  /* anytime the tiles array changes, 
+   * check to see if the game is complete */ 
   useEffect(() => {
     setGameOver(gameFinished(tiles))
   }, [tiles])

@@ -88,7 +88,10 @@ export function gameFinished(tiles) {
 /**
  * Move the tiles upward on the board 
  * returning a new board with all the tiles 
- * positions moved toward the top 
+ * positions moved toward the top
+ * Note: This function is called recursively until no more moves 
+ * can be made 
+ * 
  * @param {Array<number>} board - array of numbers representing the tiles on the board 
  * @param {Array<number>} mergedIndices - any indices that have already been merged 
  * @returns {[Array<number>, number]} [newBoard, pointsScored]  
@@ -100,14 +103,14 @@ export function slideUp(board, mergedIndices = [], pointsScored = 0) {
   // all the tiles with values
   const mappedTiles = newBoard
     .map((value, index) => ({ value, indicies: { old: index, new: getIndex("up", index) }}))
-    .filter((tiles) => tiles.value !== 0)
+    .filter((tile) => tile.value !== 0 && !mergedIndices.includes(tile.indicies.new))
     .sort(sortTilesByIndex);
 
   /* figure out how many tiles moved by counting the ones
    * that have the same new/previous values  */
   const tilesToMove = mappedTiles
     .filter(tile => tile.indicies.new !== tile.indicies.old)
-    .length
+    .length 
 
 
   // if no tiles were moved, there is no more
@@ -142,7 +145,6 @@ export function slideUp(board, mergedIndices = [], pointsScored = 0) {
         // add the points 
         pointsScored += mappedTiles[i].value * 2 
       } else {
-        console.log("unmovable tile found");
         // the tiles have different values and cannot be merged
         unMoveableTiles++;
         continue;
