@@ -6,6 +6,8 @@ const UP_MAP = [0, 1, 2, 3, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 const DOWN_MAP = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 12, 13, 14, 15];
 const LEFT_MAP = [0, 0, 1, 2, 4, 4, 5, 6, 8, 8, 9, 10, 12, 12, 13, 14];
 const RIGTH_MAP = [1, 2, 3, 3, 5, 6, 7, 7, 9, 10, 11, 11, 13, 14, 15, 15];
+const CLOCKWISE_MAP = [3,7,11,15,2,6,10,14,1,5,9,13,0,4,8,12]
+const COUNTER_CLOCKWISE_MAP = [12,8,4,0,13,9,5,1,14,10,6,2,15,11,7,3]
 
 export function getIndex(direction, index) {
   if (direction === "up") {
@@ -26,6 +28,18 @@ export function getIndex(direction, index) {
     return out;
   } else throw new Error("invalid direction");
 }
+
+/**
+ * Creates a new board with two tiles 
+ * placed on the board 
+ */
+export function generateNewGame() {
+  let board = createBoard();
+  board = placeNewTile(board)
+  board = placeNewTile(board)
+  return board 
+}
+
 
 /**
  * creates an array filled with zeros
@@ -64,7 +78,7 @@ export function newTile() {
  * to see if there are any open spaces available
  * on the board
  * @param {Array<number>} tiles
- * @returns {boolean}
+ * @returns {boolean} gameStatus
  */
 export function gameFinished(tiles) {
   let gameOver = true;
@@ -85,6 +99,7 @@ export function gameFinished(tiles) {
  */
 export function slideUp(board) {
   const newBoard = [...board];
+  let unMoveableTiles = 0; 
 
   // all the tiles with values
   const mappedTiles = newBoard
@@ -95,58 +110,7 @@ export function slideUp(board) {
   /* figure out how many tiles moved by counting the ones
    * that have the same new/previous values  */
   const movedTiles = mappedTiles.filter(tile => tile.indicies.new !== tile.indicies.old).length
-  console.log('movedTiles', movedTiles)
 
-
-  // if no tiles were moved, there is no more
-  // sliding to do
-  if (movedTiles === 0) {
-    return newBoard;
-  } else {
-    // place the new tiles in their new positions and
-    // fill the old positions with empty tiles
-    for (let i = 0; i < mappedTiles.length; i++) {   
-
-      if (mappedTiles[i].indicies.new === mappedTiles[i].indicies.old){
-        // tiles with the same index do not move
-        continue
-      } else if (newBoard[mappedTiles[i].indicies.new] === 0) {
-        // destination is an empty space, move the tile
-        // and null old value
-        newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value;
-        newBoard[mappedTiles[i].indicies.old] = 0;
-      } else if (
-        newBoard[mappedTiles[i].indicies.new] === mappedTiles[i].value
-      ) {
-        // the source and destination has the same value
-        // and null old tile location
-        newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value * 2;
-        newBoard[mappedTiles[i].indicies.old] = 0;
-      }
-    }
-    // keep doing this till nothing can move
-    return slideUp(newBoard);
-  }
-}
-
-export function slideDown(board) {
-  const newBoard = [...board];
-
-  // all the tiles with values
-  const mappedTiles = newBoard
-    .map((value, index) => ({
-      value,
-      indicies: { old: index, new: getIndex("down", index) },
-    }))
-    .filter((tiles) => tiles.value !== 0)
-    .sort(sortTilesByIndex);
-
-  /* figure out how many tiles moved by counting the ones
-   * that have the same new/previous values  */
-  const movedTiles = mappedTiles.filter(
-    (tile) => tile.indicies.new !== tile.indicies.old
-  ).length;
-  console.log("movedTiles", movedTiles);
 
   // if no tiles were moved, there is no more
   // sliding to do
@@ -156,7 +120,10 @@ export function slideDown(board) {
     // place the new tiles in their new positions and
     // fill the old positions with empty tiles
     for (let i = 0; i < mappedTiles.length; i++) {
-      if (mappedTiles[i].indicies.new === mappedTiles[i].indicies.old) {
+      if (movedTiles === unMoveableTiles) {
+        // no more tiles to move 
+        return newBoard; 
+      } else if (mappedTiles[i].indicies.new === mappedTiles[i].indicies.old) {
         // tiles with the same index do not move
         continue;
       } else if (newBoard[mappedTiles[i].indicies.new] === 0) {
@@ -164,21 +131,212 @@ export function slideDown(board) {
         // and null old value
         newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value;
         newBoard[mappedTiles[i].indicies.old] = 0;
-      } else if (
-        newBoard[mappedTiles[i].indicies.new] === mappedTiles[i].value
-      ) {
+      } else if (newBoard[mappedTiles[i].indicies.new] === mappedTiles[i].value) {
         // the source and destination has the same value
-        // and null old tile location
+        // combine tiles and null old tile location
         newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value * 2;
         newBoard[mappedTiles[i].indicies.old] = 0;
+      } else {
+        console.log('unmovable tile found')
+        // the tiles have different values and cannot be merged
+        unMoveableTiles++;
+        continue;
       }
     }
+
+    console.log("movedTiles", movedTiles);
+
+
+    // if the number of tiles that cannot be moved is
+    // the same as the number of tiles that are supposed to
+    // be moved, then we are done moving tiles
+    if (unMoveableTiles === movedTiles) {
+      return newBoard;
+    }
+    
     // keep doing this till nothing can move
     return slideUp(newBoard);
   }
 }
 
+export function slideDown(board) {
+  // rotate the board so that we can parse vertically
+  const rotatedBoard = rotateCounterClockwise(rotateCounterClockwise(board));
+  // slide and merge tiles
+  const slideBoard = slideUp(rotatedBoard);
+  // undo rotatation
+  return rotateClockwise(rotateClockwise(slideBoard));
+}
 
+// MOVING TO USING ALL SLIDE UP and just rotating the board 
+// /**
+//  * Recieves the current board as a parameter, 
+//  * and returns that board with all the tiles 
+//  * slide (and combined if applicable) to the 
+//  * bottom edge of the board 
+//  * @param {Array<number>} board 
+//  * @returns {Array<number>} board 
+//  */
+// export function slideDown(board) {
+//   const newBoard = [...board];
+//   let unMoveableTiles = 0; 
+
+//   // all the tiles with values
+//   const mappedTiles = newBoard
+//     .map((value, index) => ({
+//       value,
+//       indicies: { old: index, new: getIndex("down", index) },
+//     }))
+//     .filter((tiles) => tiles.value !== 0)
+//     .sort(sortTilesByIndex);
+
+//   /* figure out how many tiles moved by counting the ones
+//    * that have the same new/previous values  */
+//   const movedTiles = mappedTiles.filter(
+//     (tile) => tile.indicies.new !== tile.indicies.old
+//   ).length;
+//   console.log("movedTiles", movedTiles);
+
+//   // if no tiles were moved, there is no more
+//   // sliding to do
+//   if (movedTiles === 0) {
+//     return newBoard;
+//   } else {
+//     // place the new tiles in their new positions and
+//     // fill the old positions with empty tiles
+//     for (let i = mappedTiles.length -1; i > -1; i--) {
+//       if (mappedTiles[i].indicies.new === mappedTiles[i].indicies.old) {
+//         // tiles with the same index do not move
+//         continue;
+//       } else if (newBoard[mappedTiles[i].indicies.new] === 0) {
+//         // destination is an empty space, move the tile
+//         // and null old value
+//         newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value;
+//         newBoard[mappedTiles[i].indicies.old] = 0;
+//       } else if (newBoard[mappedTiles[i].indicies.new] === mappedTiles[i].value) {
+//         // the source and destination has the same value
+//         // and null old tile location
+//         newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value * 2;
+//         newBoard[mappedTiles[i].indicies.old] = 0;
+//       } else {
+//         // the tiles have different values and cannot be merged 
+//         unMoveableTiles++
+//         continue 
+//       }
+//     }
+
+//     // if the number of tiles that cannot be moved is
+//     // the same as the number of tiles that are supposed to 
+//     // be moved, then we are done moving tiles 
+//     if(unMoveableTiles === movedTiles) {
+//       return newBoard
+//     }
+
+//     // keep doing this till nothing can move
+//     return slideDown(newBoard);
+//   }
+// }
+
+
+/**
+ * Recieves the current board as a parameter, 
+ * and returns that board with all the tiles 
+ * slide (and combined if applicable) to the 
+ * right edge of the board 
+ * @param {Array<number>} board 
+ * @returns {Array<number>} board 
+ */
+export function slideRight(board) {
+  // rotate the board so that we can parse vertically 
+  const rotatedBoard = rotateCounterClockwise(board)
+  // slide and merge tiles 
+  const slideBoard = slideUp(rotatedBoard)
+  // undo rotatation 
+  return rotateClockwise(slideBoard)
+}
+
+/**
+ * Recieves the current board as a parameter, 
+ * and returns that board with all the tiles 
+ * slide (and combined if applicable) to the 
+ * left edge of the board 
+ * @param {Array<number>} board 
+ * @returns {Array<number>} board 
+ */
+export function slideLeft(board) {
+  // rotate the board so that we can parse vertically 
+  const rotatedBoard = rotateClockwise(board)
+  // slide and merge tiles 
+  const slideBoard = slideUp(rotatedBoard)
+  // undo rotatation 
+  return rotateCounterClockwise(slideBoard)
+}
+
+
+/**
+ * Takes a 2048 board as an array of numbers (4x4 only)
+ * reformats the position of those numbers to represent 
+ * a board that has been rotated 90° clockwise 
+ * @param {Array<number>} board 
+ * @returns {Array<number>} board 
+ */
+function rotateClockwise(board){
+  return board
+    .map((value, index) => ({ value, index: CLOCKWISE_MAP[index]}))
+    .sort((a, b) => a.index - b.index)
+    .map(tile => tile.value)
+}
+
+/**
+ * Takes a 2048 board as an array of numbers (4x4 only)
+ * reformats the position of those numbers to represent 
+ * a board that has been rotated 90° clockwise 
+ * @param {Array<number>} board 
+ * @returns {Array<number>} board 
+ */
+function rotateCounterClockwise(board){
+  return board
+    .map((value, index) => ({ value, index: COUNTER_CLOCKWISE_MAP[index]}))
+    .sort((a, b) => a.index - b.index)
+    .map(tile => tile.value)
+}
+
+/**
+ * Takes a 4x4 2048 board and places a new 
+ * tile randomly on the board 
+ * @param {Array<number>} board 
+ */
+export function placeNewTile(board) {
+  // generate a random spot on
+  // the board to place a new tile
+  let index = randomIndex();
+  // make sure not to replace
+  // any existing tiles
+  while (board[index] !== 0) {
+    index = randomIndex();
+  }
+  const boardCopy = [...board];
+  boardCopy[index] = newTile();
+  return boardCopy
+}
+
+/**
+ * Takes in two board and determines if 
+ * all the values in the array representing the 
+ * 2048 board are the same 
+ * @param {Array<number>} boardA 
+ * @param {Array<number>} boardB 
+ * @returns {boolean} 
+ */
+export function isDifferent(boardA, boardB) {
+  for (let i = 0; i < boardA.length; i++) {
+    console.log('a', boardA[i], 'b', boardB[i])
+    if(boardA[i] !== boardB[i]) {
+      return true 
+    }
+  }
+  return false
+}
 
 
 

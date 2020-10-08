@@ -1,30 +1,23 @@
 import { useState, useEffect } from 'react'
-import { createBoard, gameFinished, newTile, randomIndex, indexUp, slideUp } from '../utils/BoardUtilities'
+import { createBoard, gameFinished, newTile, randomIndex, slideUp, slideDown, slideRight, slideLeft, isDifferent, placeNewTile, generateNewGame } from '../utils/BoardUtilities'
 
 function useBoard(){
   const [tiles, setTiles] = useState(createBoard())
   const [gameOver, setGameOver] = useState(false)
+  const [turns, setTurns] = useState(0)
 
+  // anytime the tiles array changes, 
+  // check to see if the game is complete 
   useEffect(() => {
-    setGameOver(gameFinished(tiles)) 
+    setGameOver(gameFinished(tiles))
   }, [tiles])
+
 
   /**
    * Starts the game
-   * 
-   * generates 2 random indexes to place tiles 
-   * generates 2 random tiles to be placed at the random indexes  
    */
   function start(){
-    const tilesCopy = createBoard() 
-    const index1 = randomIndex() 
-    let index2 = randomIndex() 
-    while (index1 === index2) {
-      index2 = randomIndex() 
-    }
-    tilesCopy[index1] = newTile() 
-    tilesCopy[index2] = newTile() 
-    setTiles(tilesCopy)
+    setTiles(generateNewGame());
   }
 
   /**
@@ -32,18 +25,35 @@ function useBoard(){
    * @param {string} direction 
    */
   function slide(direction){
+    let newBoard = []
     switch (direction) {
       case "up":
-        setTiles(slideUp(tiles)) 
+        newBoard = slideUp(tiles);
         break;
       case "down":
+        newBoard = slideDown(tiles) 
         break;
       case "right":
+        newBoard = slideRight(tiles)
         break;
       case "left":
+        newBoard = slideLeft(tiles)
         break;
       default:
         break;
+    }
+
+    /* Increment turn counter */
+    if(isDifferent(newBoard,tiles)) {
+      console.log('its different')
+      console.log('old', tiles, 'new', newBoard)
+      const board = placeNewTile(newBoard)
+      console.log('placing tile', board)
+      // setTurns(turns + 1) 
+      setTiles(placeNewTile(newBoard)) 
+    } else {
+      console.log('its the same')
+      console.log("old", tiles, "new", newBoard);
     }
   }
 
