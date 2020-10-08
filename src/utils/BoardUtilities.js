@@ -89,7 +89,11 @@ export function gameFinished(tiles) {
  * Move the tiles upward on the board 
  * returning a new board with all the tiles 
  * positions moved toward the top 
- * @param {Array<number>} board
+ * 
+ * Note: This function is called recursively until no more moves 
+ * can be made 
+ * @param {Array<number>} board - the board 
+ * @param {Array<number>} mergedIndices - and indexes that have already been merged 
  * @returns {Array<number} newBoard 
  */
 export function slideUp(board, mergedIndices = []) {
@@ -99,14 +103,14 @@ export function slideUp(board, mergedIndices = []) {
   // all the tiles with values
   const mappedTiles = newBoard
     .map((value, index) => ({ value, indicies: { old: index, new: getIndex("up", index) }}))
-    .filter((tiles) => tiles.value !== 0)
+    .filter((tile) => tile.value !== 0 && !mergedIndices.includes(tile.indicies.new))
     .sort(sortTilesByIndex);
 
   /* figure out how many tiles moved by counting the ones
    * that have the same new/previous values  */
   const tilesToMove = mappedTiles
     .filter(tile => tile.indicies.new !== tile.indicies.old)
-    .length
+    .length 
 
 
   // if no tiles were moved, there is no more
@@ -120,15 +124,6 @@ export function slideUp(board, mergedIndices = []) {
       if (tilesToMove === unMoveableTiles) {
         // no more tiles to move 
         return newBoard; 
-      } else if (mergedIndices.includes(mappedTiles[i].indicies.new)) {
-        // if the destination is in the tiles merged
-        // and the number of tiles left to move is 1, 
-        // then this is the last merge
-        if (tilesToMove === (unMoveableTiles + mergedIndices.length)) {
-          return newBoard
-        }
-        unMoveableTiles++;
-        continue;
       } else if (mappedTiles[i].indicies.new === mappedTiles[i].indicies.old) {
         // tiles with the same index do not move
         continue;
@@ -148,7 +143,6 @@ export function slideUp(board, mergedIndices = []) {
         // won't be re-merged within the same turn
         mergedIndices.push(mappedTiles[i].indicies.new);
       } else {
-        console.log("unmovable tile found");
         // the tiles have different values and cannot be merged
         unMoveableTiles++;
         continue;
