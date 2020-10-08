@@ -104,7 +104,9 @@ export function slideUp(board, mergedIndices = []) {
 
   /* figure out how many tiles moved by counting the ones
    * that have the same new/previous values  */
-  const tilesToMove = mappedTiles.filter(tile => tile.indicies.new !== tile.indicies.old).length
+  const tilesToMove = mappedTiles
+    .filter(tile => tile.indicies.new !== tile.indicies.old)
+    .length
 
 
   // if no tiles were moved, there is no more
@@ -167,6 +169,14 @@ export function slideUp(board, mergedIndices = []) {
   }
 }
 
+/**
+ * Recieves the collection of values for the tiles 
+ * on the board, and re-uses rotates the board by 180°
+ * so that we can always slide the tile upward following 
+ * the same logic used in the `slideUp` function 
+ * @param {Array<number>} board 
+ * @returns {Array<number} newBoard 
+ */
 export function slideDown(board) {
   // rotate the board so that we can parse vertically
   const rotatedBoard = rotateCounterClockwise(rotateCounterClockwise(board));
@@ -175,75 +185,6 @@ export function slideDown(board) {
   // undo rotatation
   return rotateClockwise(rotateClockwise(slideBoard));
 }
-
-// MOVING TO USING ALL SLIDE UP and just rotating the board 
-// /**
-//  * Recieves the current board as a parameter, 
-//  * and returns that board with all the tiles 
-//  * slide (and combined if applicable) to the 
-//  * bottom edge of the board 
-//  * @param {Array<number>} board 
-//  * @returns {Array<number>} board 
-//  */
-// export function slideDown(board) {
-//   const newBoard = [...board];
-//   let unMoveableTiles = 0; 
-
-//   // all the tiles with values
-//   const mappedTiles = newBoard
-//     .map((value, index) => ({
-//       value,
-//       indicies: { old: index, new: getIndex("down", index) },
-//     }))
-//     .filter((tiles) => tiles.value !== 0)
-//     .sort(sortTilesByIndex);
-
-//   /* figure out how many tiles moved by counting the ones
-//    * that have the same new/previous values  */
-//   const movedTiles = mappedTiles.filter(
-//     (tile) => tile.indicies.new !== tile.indicies.old
-//   ).length;
-//   console.log("movedTiles", movedTiles);
-
-//   // if no tiles were moved, there is no more
-//   // sliding to do
-//   if (movedTiles === 0) {
-//     return newBoard;
-//   } else {
-//     // place the new tiles in their new positions and
-//     // fill the old positions with empty tiles
-//     for (let i = mappedTiles.length -1; i > -1; i--) {
-//       if (mappedTiles[i].indicies.new === mappedTiles[i].indicies.old) {
-//         // tiles with the same index do not move
-//         continue;
-//       } else if (newBoard[mappedTiles[i].indicies.new] === 0) {
-//         // destination is an empty space, move the tile
-//         // and null old value
-//         newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value;
-//         newBoard[mappedTiles[i].indicies.old] = 0;
-//       } else if (newBoard[mappedTiles[i].indicies.new] === mappedTiles[i].value) {
-//         // the source and destination has the same value
-//         // and null old tile location
-//         newBoard[mappedTiles[i].indicies.new] = mappedTiles[i].value * 2;
-//         newBoard[mappedTiles[i].indicies.old] = 0;
-//       } else {
-//         // the tiles have different values and cannot be merged 
-//         unMoveableTiles++
-//         continue 
-//       }
-//     }
-
-//     // if the number of tiles that cannot be moved is
-//     // the same as the number of tiles that are supposed to 
-//     // be moved, then we are done moving tiles 
-//     if(unMoveableTiles === movedTiles) {
-//       return newBoard
-//     }
-
-//     // keep doing this till nothing can move
-//     return slideDown(newBoard);
-//   }
-// }
 
 
 /**
@@ -337,8 +278,11 @@ export function placeNewTile(board) {
  * @returns {boolean} 
  */
 export function isDifferent(boardA, boardB) {
+  // look at every space in boardA and boardB, 
+  // as soon as a difference in values at the same 
+  // index position are found then the we know two 
+  // boards are not the same and we can return 
   for (let i = 0; i < boardA.length; i++) {
-    console.log('a', boardA[i], 'b', boardB[i])
     if(boardA[i] !== boardB[i]) {
       return true 
     }

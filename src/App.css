@@ -16,6 +16,13 @@
   align-content: center;
 }
 
+/* The game container houses the board, score, and 
+ * controls, this should be centered in the screen */
+.game_container {
+ display: flex;
+ justify-content: center;
+}
+
 
 /* align the board and the control panels horizontallly */
 .board_container {
@@ -27,9 +34,10 @@
  * pannel excluding 150px of padding on either side */
 .controlPanel {
   display: flex; 
+  flex-direction: column;
   justify-content: space-evenly;
-  padding: 0 150px;
 }
+
 /* add a better font to the buttons within the 
  * control pannel and change the font to make 
  * it a bit fancier, and now let the buttons grow
@@ -38,7 +46,9 @@
 .controlPanel > button {
   font-family: 'B612 Mono', monospace;
   flex: 1;
+  min-width: 80px;
   max-width: 100px;
+  margin: 0.5rem;
 }
 
 /* push all the other buttons in the control
@@ -46,7 +56,7 @@
  * distinguish between move related buttons and 
  * new/start game functionality */
 .start_button {
-  margin-right: 50px;
+  margin-bottom: 1rem;
 }
 
 /* display the tiles in a grid of 4 columns 
@@ -80,6 +90,17 @@
   text-align: center;
   width: 1rem;
   height: 1rem;
+}
+
+/* header should use the cool font that is being used 
+ * in the other components, and should be large since its 
+ * the header */
+.header {
+  font-family: 'B612 Mono', monospace;
+  font-size: xx-large;
+  display: flex;
+  padding: 0 150px;
+  justify-content: center;
 }
 
 
