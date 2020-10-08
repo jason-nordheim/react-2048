@@ -1,11 +1,20 @@
 # README 
 
-This is a React version of the classic arcade game 2048. 
+This is a React version of the classic arcade game 2048. The application has been deployed (via [Firebase](www.firebase.google.com)) for demo purposes at [https://play-2048-with-me.web.app/](https://play-2048-with-me.web.app/)
 
-## Game Rules 
+## How to play 
 
 When you start the game, there will be two “tiles” on the grid, each displaying the number 2 or 4.
 
+You slide all the tiles in the board either up, down, left, or right.
+
+Any tiles with the same values are merged (i.e. added together) and all the tiles on the board are pushed as far as possible to the side specified. 
+
+After all the tiles are pushed to the edge of the board and merged together, a new tile (either 2 or 4) will be placed in one of the unused spaces on the board. 
+
+Continue sliding and merging tiles until you get to 2048! 
+
+If you can no longer slide tiles, and have not reached 2048... well you didn't win - but there's no limit on how much you can try! Restart and give it another shot 
 
 ### Slide 
 
